@@ -65,9 +65,10 @@ public class PageSearch extends HttpServlet {
 		    TopScoreDocCollector results = TopScoreDocCollector.create((page - 1) * itemPerPage + itemPerPage);
 		    isearcher.search(query, results);
 		    ScoreDoc[] hits = results.topDocs((page - 1) * itemPerPage).scoreDocs;
+		    
+		    // Iterate through the results:
 		    JSONObject ret = new JSONObject();
 		    JSONArray lst = new JSONArray();
-		    // Iterate through the results:
 		    for (int i = 0; i < hits.length; i++) {
 		      Document doc = isearcher.doc(hits[i].doc);
 		      JSONObject p = new JSONObject();
@@ -80,8 +81,8 @@ public class PageSearch extends HttpServlet {
 		    }
 		    ireader.close();
 		    directory.close();
-		    long ten = Calendar.getInstance().getTimeInMillis();
 		    
+			long ten = Calendar.getInstance().getTimeInMillis();
 			PrintWriter out = response.getWriter();
 		    ret.put("elapse", ten - tst);
 		    ret.put("result", lst);
