@@ -69,7 +69,7 @@ public class AutoComp extends HttpServlet {
 			ResultSet res = stat.executeQuery("SELECT * FROM autocomp WHERE text LIKE '" + s + "%' ORDER BY count DESC");
 			PrintWriter out = response.getWriter();
 		    JSONArray lst = new JSONArray();
-			while(res.next())
+			while(res!=null&&res.next())
 				lst.put(res.getString(2));
 			out.print(lst);
 			out.close();
