@@ -72,7 +72,8 @@ public class ProfCrawler {
 			}
 			if(nam.length() <= 1)
 				return;
-			sql = "INSERT INTO prof (name, position, tel, mail, page, orientation, url) VALUES ('" + nam + "', '" + 
+			sql = "INSERT INTO prof (name, avatar, position, tel, mail, page, orientation, url) VALUES ('" + nam + "', '" +
+					avatar + "', '" + 
 					position + "', '" + 
 					tel + "', '" + 
 					mail + "', '" + 

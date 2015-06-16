@@ -20,6 +20,7 @@ INSERT INTO autocomp (text, count) VALUES ('≤‚ ‘', 1);
 CREATE TABLE `prof` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '',
+  `avatar` varchar(255) NOT NULL DEFAULT '',
   `position` varchar(50) NOT NULL DEFAULT '',
   `tel` varchar(50) NOT NULL DEFAULT '',
   `mail` varchar(50) NOT NULL DEFAULT '',

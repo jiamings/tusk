@@ -74,6 +74,21 @@ public class PageSearch extends HttpServlet {
     {
 	    JSONObject ret = new JSONObject();
 	    JSONArray lst = new JSONArray();
+    	ResultSet sql = stat.executeQuery("SELECT * FROM prof WHERE name = '" + search + "';");
+    	if(sql.next())
+    	{
+    		JSONObject p = new JSONObject();
+    		p.put("type", "prof");
+    		p.put("name", sql.getString("name"));
+    		p.put("position", sql.getString("position"));
+    		p.put("tel", sql.getString("tel"));
+    		p.put("mail", sql.getString("mail"));
+    		p.put("page", sql.getString("page"));
+    		p.put("orientation", sql.getString("orientation"));
+    		p.put("url", sql.getString("url"));
+    		p.put("avatar", sql.getString("avatar"));
+    		lst.put(p);
+    	}
 	    if(search.endsWith("Ð£Àú"))
 	    {
 	    	JSONObject p = new JSONObject();
