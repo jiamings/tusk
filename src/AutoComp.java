@@ -66,7 +66,7 @@ public class AutoComp extends HttpServlet {
 		{
 			response.setContentType("text/html;charset=utf-8");
 			String s = request.getParameter("autocomp").replace('\'', ' ');
-			ResultSet res = stat.executeQuery("SELECT * FROM autocomp WHERE text LIKE '" + s + "%'");
+			ResultSet res = stat.executeQuery("SELECT * FROM autocomp WHERE text LIKE '" + s + "%' ORDER BY count DESC");
 			PrintWriter out = response.getWriter();
 		    JSONArray lst = new JSONArray();
 			while(res.next())
