@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 
+import tusk.utils.TuskUtil;
+
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 
@@ -67,11 +69,11 @@ public class AutoComp extends HttpServlet {
 			response.setContentType("text/html;charset=utf-8");
 			String s = request.getParameter("autocomp").replace('\'', ' ');
 			ResultSet res = stat.executeQuery("SELECT * FROM autocomp WHERE text LIKE '" + s + "%' ORDER BY count DESC");
-			PrintWriter out = response.getWriter();
 		    JSONArray lst = new JSONArray();
-			while(res!=null&&res.next())
+			for(int i = 0; i < 10 && res.next(); ++i)
 				lst.put(res.getString(2));
-			out.print(lst);
+			PrintWriter out = response.getWriter();
+			out.print(TuskUtil.wrapJson(lst.toString(), request.getParameter("callback")));
 			out.close();
 		}catch(Exception e)
 		{

@@ -29,6 +29,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import tusk.utils.TuskUtil;
 import static org.junit.Assert.*;
 
 /**
@@ -69,52 +70,76 @@ public class PageSearch extends HttpServlet {
 
     static int itemPerPage = 20;
     
+    JSONObject work(String search, int page) throws Exception
+    {
+	    JSONObject ret = new JSONObject();
+	    JSONArray lst = new JSONArray();
+	    if(search.endsWith("校历"))
+	    {
+	    	JSONObject p = new JSONObject();
+	    	p.put("type",  "img");
+	    	p.put("url", "http://info.tsinghua.edu.cn/html/lmntw/img/2014-2015-1.png");
+	    	p.put("title", "清华大学秋季学期校历");
+	    	p.put("desc", "");
+	    	p.put("path", "http://info.tsinghua.edu.cn/html/lmntw/img/2014-2015-1.png");
+	    	lst.put(p);
+	    	p = new JSONObject();
+	    	p.put("type",  "img");
+	    	p.put("url", "http://info.tsinghua.edu.cn/html/lmntw/img/2014-2015-2.png");
+	    	p.put("title", "清华大学春季学期校历");
+	    	p.put("desc", "");
+	    	p.put("path", "http://info.tsinghua.edu.cn/html/lmntw/img/2014-2015-2.png");
+	    	lst.put(p);
+		    ret.put("result", lst);
+		    return ret;
+	    }
+    	//String path = getServletContext().getRealPath("/");  
+		Analyzer analyzer = new SmartChineseAnalyzer();
+	    // Now search the index:
+	    Directory directory = FSDirectory.open(new File("index/news").toPath());
+	    DirectoryReader ireader = DirectoryReader.open(directory);
+	    IndexSearcher isearcher = new IndexSearcher(ireader);
+	    // Parse a simple query that searches for "text":
+	    QueryParser parser = new QueryParser("content", analyzer);
+	    Query query = parser.parse(search);
+	    TopScoreDocCollector results = TopScoreDocCollector.create((page - 1) * itemPerPage + itemPerPage);
+	    isearcher.search(query, results);
+	    ScoreDoc[] hits = results.topDocs((page - 1) * itemPerPage).scoreDocs;
+	    
+	    // Iterate through the results:
+	    for (int i = 0; i < hits.length; i++) {
+	      Document doc = isearcher.doc(hits[i].doc);
+	      JSONObject p = new JSONObject();
+	      p.put("type", "page");
+	      p.put("title", doc.get("title"));
+	      p.put("desc", TuskUtil.getAbstract(doc.get("content"), search));
+	      p.put("url", doc.get("url"));
+	      p.put("source", doc.get("source"));
+	      lst.put(p);
+	    }
+	    ireader.close();
+	    directory.close();
+	    ret.put("result", lst);
+	    return ret;
+    }
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try
 		{
+			response.setContentType("text/html;charset=utf-8");
 			long tst = Calendar.getInstance().getTimeInMillis();
 			int page = 1;
 			if(request.getParameter("page")!=null)
 				page = Integer.valueOf(request.getParameter("page"));
-	    	//String path = getServletContext().getRealPath("/");  
-			Analyzer analyzer = new SmartChineseAnalyzer();
-			response.setContentType("text/html;charset=utf-8");
-		    // Now search the index:
-		    Directory directory = FSDirectory.open(new File("index/news").toPath());
-		    DirectoryReader ireader = DirectoryReader.open(directory);
-		    IndexSearcher isearcher = new IndexSearcher(ireader);
-		    // Parse a simple query that searches for "text":
-		    QueryParser parser = new QueryParser("content", analyzer);
 		    String search = request.getParameter("search");
-		    Query query = parser.parse(search);
-		    TopScoreDocCollector results = TopScoreDocCollector.create((page - 1) * itemPerPage + itemPerPage);
-		    isearcher.search(query, results);
-		    ScoreDoc[] hits = results.topDocs((page - 1) * itemPerPage).scoreDocs;
-		    
-		    // Iterate through the results:
-		    JSONObject ret = new JSONObject();
-		    JSONArray lst = new JSONArray();
-		    for (int i = 0; i < hits.length; i++) {
-		      Document doc = isearcher.doc(hits[i].doc);
-		      JSONObject p = new JSONObject();
-		      p.put("type", "page");
-		      p.put("title", doc.get("title"));
-		      p.put("desc", doc.get("content"));
-		      p.put("url", doc.get("url"));
-		      p.put("source", doc.get("source"));
-		      lst.put(p);
-		    }
-		    ireader.close();
-		    directory.close();
-		    
+		    JSONObject ret = work(search, page);
 			long ten = Calendar.getInstance().getTimeInMillis();
-			PrintWriter out = response.getWriter();
 		    ret.put("elapse", ten - tst);
-		    ret.put("result", lst);
-		    out.print(ret.toString());
+			PrintWriter out = response.getWriter();
+		    out.print(TuskUtil.wrapJson(ret.toString(), request.getParameter("callback")));
 			out.close();
 			
 			// DB

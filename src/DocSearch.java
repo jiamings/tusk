@@ -29,6 +29,8 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import tusk.utils.TuskUtil;
+
 /**
  * Servlet implementation class DocSearch
  */
@@ -101,7 +103,7 @@ public class DocSearch extends HttpServlet {
 		      JSONObject p = new JSONObject();
 		      p.put("type", "doc");
 		      p.put("title", doc.get("title"));
-		      p.put("abstract", doc.get("content"));
+		      p.put("abstract", TuskUtil.getAbstract(doc.get("content"), search));
 		      p.put("url", doc.get("url"));
 		      p.put("doctype", doc.get("doctype"));
 		      p.put("thumbnail", doc.get("thumbnail"));
@@ -115,7 +117,7 @@ public class DocSearch extends HttpServlet {
 			PrintWriter out = response.getWriter();
 		    ret.put("elapse", ten - tst);
 		    ret.put("result", lst);
-		    out.print(ret.toString());
+		    out.print(TuskUtil.wrapJson(ret.toString(), request.getParameter("callback")));
 			out.close();
 			
 			// DB
