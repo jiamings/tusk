@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,13 +21,16 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -114,8 +119,11 @@ public class PageSearch extends HttpServlet {
 	    Directory directory = FSDirectory.open(new File("index/news").toPath());
 	    DirectoryReader ireader = DirectoryReader.open(directory);
 	    IndexSearcher isearcher = new IndexSearcher(ireader);
-	    // Parse a simple query that searches for "text":
-	    QueryParser parser = new QueryParser("content", analyzer);
+	    Map<String, Float> boosts = new HashMap<String, Float>();
+	    boosts.put("content", 0.5f);
+	    boosts.put("title", 0.5f);
+	    String[] fieldLst = new String[]{"content", "title"};
+	    QueryParser parser = new MultiFieldQueryParser(fieldLst, analyzer, boosts);
 	    Query query = parser.parse(search);
 	    TopScoreDocCollector results = TopScoreDocCollector.create((page - 1) * itemPerPage + itemPerPage);
 	    isearcher.search(query, results);

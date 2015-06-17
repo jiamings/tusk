@@ -6,7 +6,7 @@ public class TuskUtil {
 	{
 		int st = src.indexOf(search) - 5;
 		if(st < 0)	st = 0;
-		int en = st + 100;
+		int en = st + 200;
 		if(en > src.length())
 			en = src.length();
 		return src.substring(st, en);

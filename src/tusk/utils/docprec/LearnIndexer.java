@@ -169,7 +169,7 @@ public class LearnIndexer {
 			d.add(new Field("url", path, Store.YES, Index.NO));
 			d.add(new Field("thumbnail", sthumb, Store.YES, Index.NO));
 			d.add(new Field("doctype", "pdf", Store.YES, Index.NO));
-			d.add(new Field("title", fil.getName(), Store.YES, Index.NO));
+			d.add(new Field("title", fil.getName(), Store.YES, Index.ANALYZED));
 		    iwriter.addDocument(d);
 		}catch(Exception e)
 		{

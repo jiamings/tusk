@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +21,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -88,7 +91,11 @@ public class DocSearch extends HttpServlet {
 		    DirectoryReader ireader = DirectoryReader.open(directory);
 		    IndexSearcher isearcher = new IndexSearcher(ireader);
 		    // Parse a simple query that searches for "text":
-		    QueryParser parser = new QueryParser("content", analyzer);
+		    Map<String, Float> boosts = new HashMap<String, Float>();
+		    boosts.put("content", 0.5f);
+		    boosts.put("title", 0.5f);
+		    String[] fieldLst = new String[]{"content", "title"};
+		    QueryParser parser = new MultiFieldQueryParser(fieldLst, analyzer, boosts);
 		    String search = request.getParameter("search");
 		    Query query = parser.parse(search);
 		    TopScoreDocCollector results = TopScoreDocCollector.create((page - 1) * itemPerPage + itemPerPage);
