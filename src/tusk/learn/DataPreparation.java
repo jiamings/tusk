@@ -81,8 +81,8 @@ public class DataPreparation {
 	    String nam = f.getAbsolutePath();
 	    nam = nam.substring(cutLength);
 	    String title = d.getElementsByTag("title").text();
-	    title.replace(',', '_');
-	    content.replace(',', '_');
+	    title = title.replace(',', '_');
+	    content = content.replace(',', '_');
 	    int value = 0;
 	    if(content.contains("»úÆ÷Ñ§Ï°"))
 	    	value = 1;
