@@ -17,3 +17,5 @@ hs_err_pid*
 
 # huge index file
 /index/
+WebContent/TestAudio.jsp
+WebContent/js/RecordRTC.js
