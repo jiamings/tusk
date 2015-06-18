@@ -120,8 +120,8 @@ public class PageSearch extends HttpServlet {
 	    DirectoryReader ireader = DirectoryReader.open(directory);
 	    IndexSearcher isearcher = new IndexSearcher(ireader);
 	    Map<String, Float> boosts = new HashMap<String, Float>();
-	    boosts.put("content", 0.5f);
-	    boosts.put("title", 0.5f);
+	    boosts.put("content", 0.5207875f);
+	    boosts.put("title", 0.4792125f);
 	    String[] fieldLst = new String[]{"content", "title"};
 	    QueryParser parser = new MultiFieldQueryParser(fieldLst, analyzer, boosts);
 	    Query query = parser.parse(search);

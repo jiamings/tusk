@@ -58,10 +58,9 @@ public class RenrenIndexer {
 	    	String l = fi.nextLine();
 	    	String[] s = l.split(",");
 	    	s[0] = delHTMLTag(s[0]);
-	    	s[1] = delHTMLTag(s[1]);
 	    	Document doc = new Document();
-		    doc.add(new Field("content", s[1], Store.YES, Index.ANALYZED));
-		    doc.add(new Field("url", "", Store.YES, Index.NO));
+		    doc.add(new Field("content", delHTMLTag(s[1]), Store.YES, Index.ANALYZED));
+		    doc.add(new Field("url", s[1], Store.YES, Index.NO));
 		    doc.add(new Field("title", s[0], Store.YES, Index.ANALYZED));
 		    doc.add(new Field("source", "»À»ÀÕ¯ - " + s[2], Store.YES, Index.NO));
 		    iwriter.addDocument(doc);

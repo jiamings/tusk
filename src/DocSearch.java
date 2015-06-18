@@ -92,8 +92,8 @@ public class DocSearch extends HttpServlet {
 		    IndexSearcher isearcher = new IndexSearcher(ireader);
 		    // Parse a simple query that searches for "text":
 		    Map<String, Float> boosts = new HashMap<String, Float>();
-		    boosts.put("content", 0.5f);
-		    boosts.put("title", 0.5f);
+		    boosts.put("content", 0.7813718f);
+		    boosts.put("title", 0.2186282f);
 		    String[] fieldLst = new String[]{"content", "title"};
 		    QueryParser parser = new MultiFieldQueryParser(fieldLst, analyzer, boosts);
 		    String search = request.getParameter("search");
